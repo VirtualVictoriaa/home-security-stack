@@ -1,0 +1,62 @@
+services:
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    environment:
+      TZ: America/Los_Angeles
+      WEBPASSWORD: "1For607!!"
+    volumes:
+      - './pihole/etc-pihole:/etc/pihole'
+      - './pihole/etc-dnsmasq.d:/etc/dnsmasq.d'
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    restart: unless-stopped
+    networks:
+      - security-net
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - './portainer/data:/data'
+    restart: unless-stopped
+    networks:
+      - security-net
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    volumes:
+      - './uptime-kuma/data:/app/data'
+    restart: unless-stopped
+    networks:
+      - security-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - './grafana/data:/var/lib/grafana'
+    restart: unless-stopped
+    networks:
+      - security-net
+
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - './nginx-proxy-manager/data:/data'
+      - './nginx-proxy-manager/letsencrypt:/etc/letsencrypt'
+    restart: unless-stopped
+    networks:
+      - security-net
+
+networks:
+  security-net:
+    driver: bridge

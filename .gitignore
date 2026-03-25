@@ -1,0 +1,53 @@
+# Docker
+**/data/
+**/config/
+**/logs/
+**/database*
+**/letsencrypt/
+
+# Sensitive files
+**/*password*
+**/*secret*
+**/setupVars.conf
+**/.env
+.env
+secrets/
+
+# Pi-hole specific
+pihole/etc-pihole/setupVars.conf
+pihole/etc-pihole/pihole-FTL.conf
+
+# Nginx Proxy Manager
+nginx-proxy-manager/data/
+nginx-proxy-manager/letsencrypt/
+
+# Grafana
+grafana/data/
+
+# Portainer
+portainer/data/
+
+# Uptime Kuma
+uptime-kuma/data/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# Backups
+*.tar.gz
+*.backup
+backups/
+
+# Docker Compose
+docker-compose.override.yml
+
+# Keep directories but exclude contents
+pihole/*
+!pihole/.gitkeep
+grafana/*
+!grafana/.gitkeep
+# etc.
+
