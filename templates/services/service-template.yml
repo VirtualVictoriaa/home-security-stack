@@ -1,0 +1,13 @@
+# Template for new services
+# service-name:
+#   image: image:tag
+#   container_name: service-name
+#   ports:
+#     - "external:internal"
+#   environment:
+#     - KEY=VALUE
+#   volumes:
+#     - ./service-name/data:/path/in/container
+#   restart: unless-stopped
+#   networks:
+#     - security-net
