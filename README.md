@@ -1,13 +1,23 @@
 # Home Security Stack
 
-Clean Docker setup for home network security.
+## Current Status: ✅ Pi-hole DNS Operational
+- Pi-hole running with host networking
+- DNS working network-wide
+- Web interface accessible
+- Ready for additional services
 
 ## Services
+- **Pi-hole**: DNS ad-blocking (`http://192.168.0.134/admin/`)
+- **Nginx Proxy Manager**: Reverse proxy (`http://192.168.0.134:81/`)
 
-- **Pi-hole**: DNS ad-blocking (port 8080)
-- **Nginx Proxy Manager**: HTTPS reverse proxy (port 81)
+## Next Steps
+1. Add monitoring (Grafana + Prometheus)
+2. Add Docker management (Portainer)
+3. Add service monitoring (Uptime Kuma)
 
-## Quick Start
+## Access URLs (Local Network)
+- Pi-hole: `http://192.168.0.134/admin/`
+- NPM: `http://192.168.0.134:81/`
 
-cd ~/docker-security
-./scripts/setup.sh
+## Remote Access
+Via Tailscale MagicDNS using custom domains.
