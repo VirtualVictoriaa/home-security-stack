@@ -1,55 +1,49 @@
 #!/bin/bash
-set -e  # Exit on error
+set -e
 
 echo "=== Home Security Stack Setup ==="
 cd ~/docker-security
 
-# Stop any running containers
+# Stop and clean up
 echo "Stopping existing containers..."
-docker compose down 2>/dev/null || true
+docker compose down --remove-orphans 2>/dev/null || true
 
-# Clean up Docker volumes
+# Clean up volumes
 echo "Cleaning up volumes..."
-sudo rm -rf pihole/ nginx-proxy-manager/
+sudo rm -rf pihole/ nginx-proxy-manager/ 2>/dev/null || true
 
 # Create directories
 echo "Creating directories..."
 mkdir -p pihole/{etc-pihole,etc-dnsmasq.d}
 mkdir -p nginx-proxy-manager/{data,letsencrypt}
 
-# Validate docker-compose.yml
+# Create Pi-hole config with password
+echo "Configuring Pi-hole..."
+cat > pihole/etc-pihole/setupVars.conf << 'CONFIG'
+WEBPASSWORD=7069686f6c65313233
+PIHOLE_INTERFACE=eth0
+IPV4_ADDRESS=192.168.0.134
+PIHOLE_DNS_1=1.1.1.1
+PIHOLE_DNS_2=1.0.0.1
+QUERY_LOGGING=true
+INSTALL_WEB=true
+CONFIG
+
+# Validate and start
 echo "Validating docker-compose.yml..."
 docker compose config -q
 
-# Start services
 echo "Starting services..."
 docker compose up -d
 
-# Wait for services to start
-echo "Waiting for services to initialize..."
+# Wait and test
+echo "Waiting for services..."
 sleep 15
 
-# Check service status
-echo "=== Service Status ==="
-docker compose ps
-
-# Check Pi-hole logs for password info
-echo -e "\n=== Pi-hole Logs (last 10 lines) ==="
-docker compose logs pihole | tail -10
-
-# Check Nginx Proxy Manager logs
-echo -e "\n=== Nginx Proxy Manager Logs (last 5 lines) ==="
-docker compose logs nginx-proxy-manager | tail -5
-
-# Test web interfaces
-echo -e "\n=== Web Interface Tests ==="
-echo "Pi-hole: http://192.168.0.134:8080/admin"
+echo "=== Final Test ==="
+echo "Pi-hole: http://192.168.0.134:8080/admin/"
 echo "Password: pihole123"
-echo "Nginx Proxy Manager: http://192.168.0.134:81"
-echo "Default: admin@example.com / changeme"
+echo "Testing access..."
+curl -s -o /dev/null -w "Pi-hole Status: %{http_code}\n" http://192.168.0.134:8080/admin/
 
-echo -e "\n=== Network Tests ==="
-echo "Testing Pi-hole DNS..."
-nslookup google.com 192.168.0.134
-
-echo -e "\n=== Setup Complete ==="
+echo "=== Setup Complete ==="
